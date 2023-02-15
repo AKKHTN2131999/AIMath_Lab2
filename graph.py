@@ -1,9 +1,11 @@
 from vertex import Vertex
+from typing import Any, Text, List
 
 class Graph:
     def __init__(self):
         self.vertList = {}
         self.numVertices = 0
+        self.time = 0
 
 
     def addVertex(self,key):
@@ -24,7 +26,11 @@ class Graph:
         return n in self.vertList
 
 
-    def addEdge(self,f,t,weight=0):
+    def addEdge(
+        self,
+        f: Any,
+        t: Any,
+        weight: int =0):
         if f not in self.vertList:
             nv = self.addVertex(f)
         if t not in self.vertList:
@@ -38,12 +44,6 @@ class Graph:
 
     def __iter__(self):
         return iter(self.vertList.values())
-
-
-class DFSGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        self.time = 0
 
     def bfs(self, start: Vertex):
         start.setDistance(0)
@@ -61,53 +61,74 @@ class DFSGraph(Graph):
                     vertQueue.append(nbr)
             currentVert.setColor('black')
 
+    def dfs(self, start: Vertex):
+        start.setDistance(0)
+        start.setPred(None)
+        vertStack = []
+        vertStack.append(start)
+        step = -1
+        while (len(vertStack) > 0):
+            currentVert: Vertex = vertStack.pop(-1)
+            step+=1
+            for nbr in currentVert.getConnections():
+                nbr: Vertex = nbr
+                nbr.setDiscovery(step)
+                if (nbr.getColor() == 'white'):
+                    nbr.setColor('gray')
+                    nbr.setDistance(currentVert.getDistance() + 1)
+                    nbr.setPred(currentVert)
+                    vertStack.append(nbr)
+            
+            currentVert.setColor('black')
+            step+=1
+            currentVert.setFinish(self.time)
 
-class DFSGraph(Graph):
-    def __init__(self):
-        super().__init__()
-        self.time = 0
 
+#Build word graph 
+def buildGraph(wList):
+    d = {}
+    g = Graph()
+    #phân hoạch các từ cùng độ dài chỉ khác nhau 1 ký tự
+    for line in wList: #lấy từng từ trong từ điển
+        word = line[:-1] 
+        for i in range(len(word)):
+            bucket = word[:i] + '_' + word[i+1:]
+            if bucket in d:
+                d[bucket].append(word)
+            else:
+                d[bucket] = [word] 
+    #thêm các đỉnh và các cạnh cho các từng trong cùng bucket
+    for bucket in d.keys():
+        for word1 in d[bucket]:
+            for word2 in d[bucket]:
+                if word1 != word2:
+                    g.addEdge(word1,word2)
+    return g
 
-    def dfs(self):
-        for aVertex in self:
-            aVertex : Vertex = aVertex
-            aVertex.setColor('white')
-            aVertex.setPred(-1)
-        for aVertex in self:
-            if aVertex.getColor() == 'white':
-                self.dfsvisit(aVertex)
-
-
-    def dfsvisit(
-        self,
-        startVertex: Vertex
-        ):
-        startVertex.setColor('gray')
-        self.time += 1
-        startVertex.setDiscovery(self.time)
-        for nextVertex in startVertex.getConnections():
-            nextVertex:Vertex = nextVertex
-            if nextVertex.getColor() == 'white':
-                nextVertex.setPred(startVertex)
-                self.dfsvisit(nextVertex)
-        startVertex.setColor('black')
-        self.time += 1
-        startVertex.setFinish(self.time)
+def traverse(y:Vertex):
+    x = y
+    while (x.getPred()):
+        print(x.getId())
+        x = x.getPred()
+    print(x.getId())
 
 
 if __name__ == '__main__':
     g = Graph()
     for i in range(6):
         g.addVertex(i)
-        g.addEdge(0,1,5)
-        g.addEdge(0,5,2)
-        g.addEdge(1,2,4)
-        g.addEdge(2,3,9)
-        g.addEdge(3,4,7)
-        g.addEdge(3,5,3)
-        g.addEdge(4,0,1)
-        g.addEdge(5,4,8)
-        g.addEdge(5,2,1)
-        for v in g:
-            for w in v.getConnections():
-                print("( %s , %s )" % (v.getId(), w.getId()))
+    g.addEdge(0,1)
+    g.addEdge(0,4)
+    g.addEdge(1,2)
+    g.addEdge(2,3)
+    g.addEdge(3,6)
+    g.addEdge(3,5)
+    g.addEdge(6,7)
+    g.addEdge(6,8)
+    for v in g:
+        for w in v.getConnections():
+            print("( %s , %s )" % (v.getId(), w.getId()))
+    
+    g.dfs(g.getVertex(0))
+    traverse(g.getVertex(6))
+

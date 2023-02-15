@@ -5,6 +5,11 @@ class Vertex:
         ):
         self.id = key
         self.connectedTo = {}
+        self.discovery = 0
+        self.distance = 0
+        self.pred = None
+        self.color = "white"
+        self.finish = 0
 
     
     def getDistance(self):
@@ -16,7 +21,7 @@ class Vertex:
     def getColor(self):
         return self.color
 
-    def setDistance(self, distance):
+    def setDistance(self, distance: int):
         self.distance = distance
 
     def setPred(self, pred ):
