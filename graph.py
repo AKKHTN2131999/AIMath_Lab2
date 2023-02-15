@@ -40,6 +40,61 @@ class Graph:
         return iter(self.vertList.values())
 
 
+class DFSGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        self.time = 0
+
+    def bfs(self, start: Vertex):
+        start.setDistance(0)
+        start.setPred(None)
+        vertQueue = []
+        vertQueue.append(start)
+        while (len(vertQueue) > 0):
+            currentVert: Vertex = vertQueue.pop(0)
+            for nbr in currentVert.getConnections():
+                nbr: Vertex = nbr
+                if (nbr.getColor() == 'white'):
+                    nbr.setColor('gray')
+                    nbr.setDistance(currentVert.getDistance() + 1)
+                    nbr.setPred(currentVert)
+                    vertQueue.append(nbr)
+            currentVert.setColor('black')
+
+
+class DFSGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        self.time = 0
+
+
+    def dfs(self):
+        for aVertex in self:
+            aVertex : Vertex = aVertex
+            aVertex.setColor('white')
+            aVertex.setPred(-1)
+        for aVertex in self:
+            if aVertex.getColor() == 'white':
+                self.dfsvisit(aVertex)
+
+
+    def dfsvisit(
+        self,
+        startVertex: Vertex
+        ):
+        startVertex.setColor('gray')
+        self.time += 1
+        startVertex.setDiscovery(self.time)
+        for nextVertex in startVertex.getConnections():
+            nextVertex:Vertex = nextVertex
+            if nextVertex.getColor() == 'white':
+                nextVertex.setPred(startVertex)
+                self.dfsvisit(nextVertex)
+        startVertex.setColor('black')
+        self.time += 1
+        startVertex.setFinish(self.time)
+
+
 if __name__ == '__main__':
     g = Graph()
     for i in range(6):
