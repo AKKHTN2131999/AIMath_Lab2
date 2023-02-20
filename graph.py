@@ -16,10 +16,7 @@ class Graph:
 
 
     def getVertex(self,n):
-        if n in self.vertList:
-            return self.vertList[n]
-        else:
-            return None
+        return self.vertList[n] if n in self.vertList else None
 
 
     def __contains__(self,n):
@@ -46,42 +43,42 @@ class Graph:
         return iter(self.vertList.values())
 
     def bfs(self, start: Vertex):
-        start.setDistance(0)
-        start.setPred(None)
-        vertQueue = []
-        vertQueue.append(start)
-        while (len(vertQueue) > 0):
+        vertQueue = self._extracted_from_dfs_2(start)
+        while vertQueue:
             currentVert: Vertex = vertQueue.pop(0)
             for nbr in currentVert.getConnections():
                 nbr: Vertex = nbr
                 if (nbr.getColor() == 'white'):
-                    nbr.setColor('gray')
-                    nbr.setDistance(currentVert.getDistance() + 1)
-                    nbr.setPred(currentVert)
-                    vertQueue.append(nbr)
+                    self._extracted_from_dfs_10(nbr, currentVert, vertQueue)
             currentVert.setColor('black')
 
     def dfs(self, start: Vertex):
-        start.setDistance(0)
-        start.setPred(None)
-        vertStack = []
-        vertStack.append(start)
+        vertStack = self._extracted_from_dfs_2(start)
         step = -1
-        while (len(vertStack) > 0):
+        while vertStack:
             currentVert: Vertex = vertStack.pop(-1)
             step+=1
             for nbr in currentVert.getConnections():
                 nbr: Vertex = nbr
                 nbr.setDiscovery(step)
                 if (nbr.getColor() == 'white'):
-                    nbr.setColor('gray')
-                    nbr.setDistance(currentVert.getDistance() + 1)
-                    nbr.setPred(currentVert)
-                    vertStack.append(nbr)
-            
+                    self._extracted_from_dfs_10(nbr, currentVert, vertStack)
             currentVert.setColor('black')
             step+=1
             currentVert.setFinish(self.time)
+
+    # TODO Rename this here and in `bfs` and `dfs`
+    def _extracted_from_dfs_2(self, start):
+        start.setDistance(0)
+        start.setPred(None)
+        return [start]
+
+    # TODO Rename this here and in `bfs` and `dfs`
+    def _extracted_from_dfs_10(self, nbr, currentVert, arg2):
+        nbr.setColor('gray')
+        nbr.setDistance(currentVert.getDistance() + 1)
+        nbr.setPred(currentVert)
+        arg2.append(nbr)
 
 
 #Build word graph 
@@ -90,15 +87,15 @@ def buildGraph(wList):
     g = Graph()
     #phân hoạch các từ cùng độ dài chỉ khác nhau 1 ký tự
     for line in wList: #lấy từng từ trong từ điển
-        word = line[:-1] 
+        word = line[:-1]
         for i in range(len(word)):
-            bucket = word[:i] + '_' + word[i+1:]
+            bucket = f'{word[:i]}_{word[i + 1:]}'
             if bucket in d:
                 d[bucket].append(word)
             else:
-                d[bucket] = [word] 
+                d[bucket] = [word]
     #thêm các đỉnh và các cạnh cho các từng trong cùng bucket
-    for bucket in d.keys():
+    for bucket in d:
         for word1 in d[bucket]:
             for word2 in d[bucket]:
                 if word1 != word2:
@@ -127,8 +124,8 @@ if __name__ == '__main__':
     g.addEdge(6,8)
     for v in g:
         for w in v.getConnections():
-            print("( %s , %s )" % (v.getId(), w.getId()))
-    
+            print(f"( {v.getId()} , {w.getId()} )")
+
     g.dfs(g.getVertex(0))
     traverse(g.getVertex(6))
 
