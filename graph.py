@@ -5,7 +5,7 @@ class Graph:
     def __init__(self):
         self.vertList = {}
         self.numVertices = 0
-        self.time = 0
+        # self.time = 0
 
 
     def addVertex(self,key):
@@ -54,7 +54,7 @@ class Graph:
 
     def dfs(self, start: Vertex):
         vertStack = self._extracted_from_dfs_2(start)
-        step = -1
+        step = 0
         while vertStack:
             currentVert: Vertex = vertStack.pop(-1)
             step+=1
@@ -64,8 +64,9 @@ class Graph:
                 if (nbr.getColor() == 'white'):
                     self._extracted_from_dfs_10(nbr, currentVert, vertStack)
             currentVert.setColor('black')
+            
+            currentVert.setFinish(step)
             step+=1
-            currentVert.setFinish(self.time)
 
     # TODO Rename this here and in `bfs` and `dfs`
     def _extracted_from_dfs_2(self, start):
@@ -81,45 +82,47 @@ class Graph:
         arg2.append(nbr)
 
 
-#Build word graph 
-def buildGraph(wList):
-    d = {}
-    g = Graph()
-    #phân hoạch các từ cùng độ dài chỉ khác nhau 1 ký tự
-    for line in wList: #lấy từng từ trong từ điển
-        word = line[:-1]
-        for i in range(len(word)):
-            bucket = f'{word[:i]}_{word[i + 1:]}'
-            if bucket in d:
-                d[bucket].append(word)
-            else:
-                d[bucket] = [word]
-    #thêm các đỉnh và các cạnh cho các từng trong cùng bucket
-    for bucket in d:
-        for word1 in d[bucket]:
-            for word2 in d[bucket]:
-                if word1 != word2:
-                    g.addEdge(word1,word2)
-    return g
+# #Build word graph 
+# def buildGraph(wList):
+#     d = {}
+#     g = Graph()
+#     #phân hoạch các từ cùng độ dài chỉ khác nhau 1 ký tự
+#     for line in wList: #lấy từng từ trong từ điển
+#         word = line[:-1]
+#         for i in range(len(word)):
+#             bucket = f'{word[:i]}_{word[i + 1:]}'
+#             if bucket in d:
+#                 d[bucket].append(word)
+#             else:
+#                 d[bucket] = [word]
+#     #thêm các đỉnh và các cạnh cho các từng trong cùng bucket
+#     for bucket in d:
+#         for word1 in d[bucket]:
+#             for word2 in d[bucket]:
+#                 if word1 != word2:
+#                     g.addEdge(word1,word2)
+#     return g
 
 def traverse(y:Vertex):
     x = y
     while (x.getPred()):
         print(x.getId())
         x = x.getPred()
+        print(x.__dict__)
     print(x.getId())
 
 
 if __name__ == '__main__':
     g = Graph()
-    for i in range(6):
+    for i in range(9):
         g.addVertex(i)
     g.addEdge(0,1)
     g.addEdge(0,4)
     g.addEdge(1,2)
-    g.addEdge(2,3)
+    g.addEdge(1,3)
+    g.addEdge(2,5)
     g.addEdge(3,6)
-    g.addEdge(3,5)
+    # g.addEdge(3,5)
     g.addEdge(6,7)
     g.addEdge(6,8)
     for v in g:

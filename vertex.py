@@ -3,7 +3,7 @@ class Vertex:
         self,
         key,
         ):
-        self.id = key
+        self.id = key         
         self.connectedTo = {}
         self.discovery = 0
         self.distance = 0
