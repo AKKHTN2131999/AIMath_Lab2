@@ -1,19 +1,11 @@
 # AIMath_Lab2
 
-Bài tập 2: Code thuật toán BFS và DFS từ cấu trúc dữ liệu của thầy Thúc
+Lab 02: Code thuật toán BFS và DFS từ cấu trúc dữ liệu Graph
 
-Commit 1
+- **graph.py**: chứa class Graph
+- **vertex.py**: chứa class Vertex
 
-<<<<<<< HEAD
-Commit 2
-========
-
-Commit 3
-
->>>>>>> test_detach_head
->>>>>>>
->>>>>>
->>>>>
->>>>
->>>
->>
+## Cách chạy:
+```
+python3 graph.py
+```
