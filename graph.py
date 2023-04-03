@@ -85,11 +85,13 @@ class Graph:
         for nextVertex in startVertex.getConnections():
             if nextVertex.getColor() == 'white':
                 nextVertex.setPred(startVertex)
-                self.dfsvisit(nextVertex, time)
+                time = self.dfsvisit(nextVertex, time)
 
         startVertex.setColor('black')
         time += 1
         startVertex.setFinish(time)
+        
+        return time
 
 
     def traverse_dfs(self):
